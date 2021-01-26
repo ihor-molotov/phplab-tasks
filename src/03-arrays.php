@@ -10,6 +10,17 @@
  */
 function repeatArrayValues(array $input)
 {
+    $values_array = [];
+
+    foreach($input as $value) {
+        $i = $value;
+        while($i > 0) {
+            $values_array[] = $value;
+            $i--;
+        }
+    }
+
+    return $values_array;
 }
 
 /**
@@ -22,8 +33,21 @@ function repeatArrayValues(array $input)
  */
 function getUniqueValue(array $input)
 {
+    if(empty($input)) {
+        return 0;
+    }
+    sort($input);
+    $count_values = array_count_values($input);
+    foreach ($count_values as $key => $value) {
+        if($value == 1 ){
+            $result = $key;
+            break;
+         } else {
+            $result = 0;
+        }
+    }
+    return $result;
 }
-
 /**
  * The $input variable contains an array of arrays
  * Each sub array has keys: name (contains strings), tags (contains array of strings)
@@ -50,4 +74,16 @@ function getUniqueValue(array $input)
  */
 function groupByTag(array $input)
 {
+    array_multisort($input);
+
+    $listOfNames = [];
+
+    foreach($input as $value) {
+        foreach($value['tags'] as $values_tag) {
+            $listOfNames[$values_tag][] = $value['name'];
+        }
+    }
+    ksort($listOfNames);
+
+    return $listOfNames;
 }
