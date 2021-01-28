@@ -56,19 +56,25 @@ function isLeapYear(int $year)
  * @return boolean
  * @throws InvalidArgumentException
  */
-function isSumEqual(string $input) {
-    $length = strlen($input);
-    if ($length > 6) {
-        throw new InvalidArgumentException('Input contains more than 6 digits');
+function isSumEqual($input) {
+    $first_res = 0;
+    $second_res = 0;
+    $sum_array = str_split($input);
+    if (count($sum_array) != 6) {
+      throw new InvalidArgumentException("InvalidArgumentException;");
+    } else {
+      for ($i = 0; $i < count($sum_array) / 2; $i++) {
+        $first_res += $sum_array[$i];
+      }
+      for ($k = count($sum_array) - 1; $k >= count($sum_array) / 2; $k--) {
+        $second_res += $sum_array[$k];
+      }
+      if ($first_res == $second_res) {
+        return true;
+      } else {
+        return false;
+      }
     }
-    $a = 0;
-    $b = 0;
-    for ($i = 0; $i < $length; $i++) {
-        if ($i < $length / 2) {
-            $a += (int) $input[$i];
-        } else {
-            $b += (int) $input[$i];
-        }
-    }
-    return $a == $b;
-}
+  }
+  
+  

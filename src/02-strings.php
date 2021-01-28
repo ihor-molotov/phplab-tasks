@@ -30,7 +30,7 @@ function mirrorMultibyteString(string $input)
         $text = implode($text);
         array_push($words_array, $text);
     }
-    return inplode(' ', $words_array);
+    return implode(' ', $words_array);
 }
 
 /**
