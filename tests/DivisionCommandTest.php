@@ -27,9 +27,9 @@ class DivisionCommandTest extends TestCase
     {
         return [
             [3, 1, 4],
-            [3.1, 0.9, 2.5],
-            [1, 6, -8],
-            ['2', 18, 11],
+            [3.4, 0.9, 2.5],
+            [-2, 6, -8],
+            ['2', 1, 2],
         ];
     }
 

@@ -1,12 +1,11 @@
 <?php
-
 use PHPUnit\Framework\TestCase;
-use src\oop\Commands\SumCommand;
+use src\oop\Commands\SubCommand;
 
 class SubCommandTest extends TestCase
 {
     /**
-     * @var SumCommand
+     * @var SubCommand
      */
     private $command;
 
@@ -26,10 +25,10 @@ class SubCommandTest extends TestCase
     public function commandPositiveDataProvider()
     {
         return [
-            [2, 3, 9],
-            [1.1, 0.2, 0.5],
-            [1, 6, -1],
-            ['2', 18, 21],
+            [10, 3, 7],
+            [0.8, 0.7, 0.1],
+            [-12, -2, -10],
+            ['8', 11, -3],
         ];
     }
 
