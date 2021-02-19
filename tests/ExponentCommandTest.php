@@ -26,10 +26,10 @@ class ExponentCommandTest extends TestCase
     public function commandPositiveDataProvider()
     {
         return [
-            [3, 1, 4],
-            [3.1, 0.9, 2.5],
-            [12, 63, -8],
-            ['2', 18, 112],
+            [1, 2, 1],
+            [0.2, 2, 0.04],
+            [-2, 3, -8],
+            ['5', 3, 125],
         ];
     }
 

@@ -26,10 +26,10 @@ class MultiplyCommandTest extends TestCase
     public function commandPositiveDataProvider()
     {
         return [
-            [3, 2, 1],
-            [1.1, 0.9, 9.5],
-            [12, 63, -8],
-            ['8', 11, 12],
+            [1, 1, 1],
+            [0.2, 0.4, 0.08],
+            [-1, 2, -2],
+            ['5', 10, 50],
         ];
     }
 

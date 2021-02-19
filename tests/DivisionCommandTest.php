@@ -26,10 +26,10 @@ class DivisionCommandTest extends TestCase
     public function commandPositiveDataProvider()
     {
         return [
-            [3, 1, 4],
-            [3.4, 0.9, 2.5],
-            [-2, 6, -8],
-            ['2', 1, 2],
+            [1, 1, 1],
+            [0.2, 0.4, 0.5],
+            [-1, 2, -0.5],
+            ['5', 10, 0.5],
         ];
     }
 
