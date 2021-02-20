@@ -23,8 +23,8 @@ SQL;
 $query = $pdo->prepare($sql);
 $query->execute();
 $uniqueFirstLetters = array_map(
-    function ($airoport) {
-        return $airoport['name'];
+    function ($airport) {
+        return $airport['name'];
     },
     $query->fetchAll()
 );
@@ -39,31 +39,29 @@ $uniqueFirstLetters = array_map(
  * For filtering by state you will need to JOIN states table and check if states.name = A
  * where A - requested filter value
  */
-$filtered_airoports = '';
-if (isset($_GET['filter_by_first_letter']) && isset($_GET['filter_by_state'])) {
-    $filtered_airoports = "WHERE airports.name LIKE '{$_GET['filter_by_first_letter']}%'
-               AND states.name LIKE '{$_GET['filter_by_state']}'";
+$airport_filter = '';
+
+if (isset($_GET['filter_by_first_letter']) &&
+    isset($_GET['filter_by_state'])) {
+    $airport_filter = "WHERE airports.name LIKE '{$_GET['filter_by_first_letter']}%'
+        AND states.name LIKE '{$_GET['filter_by_state']}'";
 } elseif (isset($_GET['filter_by_first_letter'])) {
-    $filtered_airoports = "WHERE airports.name LIKE '{$_GET['filter_by_first_letter']}%'";
+    $airport_filter = "WHERE airports.name LIKE '{$_GET['filter_by_first_letter']}%'";
 } elseif (isset($_GET['filter_by_state'])) {
-    $filtered_airoports = "WHERE states.name LIKE '{$_GET['filter_by_state']}'";
+    $airport_filter = "WHERE states.name LIKE '{$_GET['filter_by_state']}'";
 }
+
 $sql = <<<SQL
-SELECT COUNT(*)
-FROM (
-    SELECT airports.name AS name, states.name AS state
-    FROM airports
-    JOIN states
-    ON states.id = airports.state_id
-    {$filtered_airoports}
-    ) AS airports_filtered
+SELECT COUNT(airports.name) AS airports_count
+FROM airports 
+JOIN states ON states.id = airports.state_id 
+JOIN cities ON cities.id = airports.city_id
+{$airport_filter}
 SQL;
 
-$filtered_query = $pdo->prepare($sql);
-$filtered_query->execute();
-
-$airoportsLengthQuery = $filtered_query->fetchAll()[0][0];
-
+$sth = $pdo->prepare($sql);
+$sth->execute();
+$filterAirportsCount = $sth->fetch(PDO::FETCH_COLUMN);
 
 // Sorting
 /**
@@ -111,10 +109,11 @@ JOIN states
 ON states.id = airports.state_id
 JOIN cities
 ON cities.id = airports.city_id
-{$filtered_query}
+{$airport_filter}
 {$sortQuery}
 {$limitQuery}
 SQL;
+
 
 $finalQuery = $pdo->prepare($sql);
 $finalQuery->execute();
@@ -174,10 +173,14 @@ $airports = $finalQuery->fetchAll();
     <table class="table">
         <thead>
         <tr>
-            <th scope="col"><a href="<?= '?' . http_build_query(array_merge($_GET, ['sort' => 'name'])); ?>">Name</a></th>
-            <th scope="col"><a href="<?= '?' . http_build_query(array_merge($_GET, ['sort' => 'code'])); ?>">Code</a></th>
-            <th scope="col"><a href="<?= '?' . http_build_query(array_merge($_GET, ['sort' => 'state'])); ?>">State</a></th>
-            <th scope="col"><a href="<?= '?' . http_build_query(array_merge($_GET, ['sort' => 'city'])); ?>">City</a></th>
+            <th scope="col"><a href="<?= '?' . http_build_query(array_merge($_GET, ['sort' => 'name'])); ?>">Name</a>
+            </th>
+            <th scope="col"><a href="<?= '?' . http_build_query(array_merge($_GET, ['sort' => 'code'])); ?>">Code</a>
+            </th>
+            <th scope="col"><a href="<?= '?' . http_build_query(array_merge($_GET, ['sort' => 'state'])); ?>">State</a>
+            </th>
+            <th scope="col"><a href="<?= '?' . http_build_query(array_merge($_GET, ['sort' => 'city'])); ?>">City</a>
+            </th>
             <th scope="col">Address</th>
             <th scope="col">Timezone</th>
         </tr>
@@ -198,7 +201,9 @@ $airports = $finalQuery->fetchAll();
             <tr>
                 <td><?= $airport['name'] ?></td>
                 <td><?= $airport['code'] ?></td>
-                <td><a href="<?= '?' . http_build_query(array_merge($_GET, ['filter_by_state' => $airport['state']], ['page' => 1])); ?>"><?= $airport['state'] ?></a></td>
+                <td><a href="<?= '?' . http_build_query(
+                        array_merge($_GET, ['filter_by_state' => $airport['state']], ['page' => 1])
+                    ); ?>"><?= $airport['state'] ?></a></td>
                 <td><?= $airport['city_name'] ?></td>
                 <td><?= $airport['address'] ?></td>
                 <td><?= $airport['timezone'] ?></td>
@@ -219,14 +224,16 @@ $airports = $finalQuery->fetchAll();
     -->
     <nav aria-label="Navigation">
         <ul class="pagination justify-content-center">
-            <?php for ($k = 1; $k <= ceil($airoportsLengthQuery / $postsPerPage); $k++): ?>
+            <?php
+            for ($k = 1; $k <= ceil($filterAirportsCount / $postsPerPage); $k++): ?>
                 <li class="page-item <?= (isset($_GET['page']) && $k == $_GET['page']) ||
-                (!isset($_GET['page']) && $k == 1) ? 'active' : ''; ?>" >
+                (!isset($_GET['page']) && $k == 1) ? 'active' : ''; ?>">
                     <a class="page-link" href="<?= '?' . http_build_query(array_merge($_GET, ['page' => $k])); ?>">
                         <?= $k; ?>
                     </a>
                 </li>
-            <?php endfor; ?>
+            <?php
+            endfor; ?>
         </ul>
     </nav>
 

@@ -60,17 +60,17 @@ foreach (require_once('../web/airports.php') as $item) {
     // If result is empty - we need to INSERT airport
     if (!$airport) {
         $sth = $pdo->prepare(
-            'INSERT INTO airports (name, code, address, timezone, cityId, stateId) 
-            VALUES (:name, :code, :address, :timezone, :cityId, :stateId)'
+            'INSERT INTO airports (name,state_id,city_id,code,address,timezone) VALUES (:name,:state_id,:city_id,:code,:address,:timezone)'
         );
+        var_dump($sth);
         $sth->execute(
             [
                 'name' => $item['name'],
                 'code' => $item['code'],
                 'address' => $item['address'],
                 'timezone' => $item['timezone'],
-                'cityId' => $cityId,
-                'stateId' => $stateId
+                'city_id' => $cityId,
+                'state_id' => $stateId
             ]
         );
         // We will use this variable to INSERT airport
