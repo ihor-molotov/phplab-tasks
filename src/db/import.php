@@ -62,7 +62,6 @@ foreach (require_once('../web/airports.php') as $item) {
         $sth = $pdo->prepare(
             'INSERT INTO airports (name,state_id,city_id,code,address,timezone) VALUES (:name,:state_id,:city_id,:code,:address,:timezone)'
         );
-        var_dump($sth);
         $sth->execute(
             [
                 'name' => $item['name'],
